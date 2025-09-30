@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Gastos do Casal</title>
+    <!-- Incluindo o Tailwind CSS para um design moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluindo ícones da Lucide para uma interface mais clara -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Estilo customizado para animações e ajustes finos */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Imagem de fundo com fallback de cor */
+            background-image: url('9fd60c9d-46a5-4ec4-9f4f-5484e17d8856.JPG');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-color: #f1f5f9; /* Cor de fallback caso a imagem não carregue */
+        }
+        /* Overlay para melhorar a legibilidade do conteúdo sobre a imagem */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(241, 245, 249, 0.85); /* slate-100 com 85% de opacidade */
+            z-index: -1; /* Coloca o overlay atrás do conteúdo */
+        }
+        .hidden-details {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s ease-in-out;
+            transform: translateY(-10px);
+        }
+        .show-details {
+            max-height: 500px; /* Altura suficiente para os campos */
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Estilização para o placeholder da data */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        input[type="date"]:invalid {
+            color: #9ca3af; /* gray-400 */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-5xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Controle Financeiro do Casal</h1>
+            <p class="text-slate-500 mt-2">Adicione e gerencie os gastos mensais e parcelados.</p>
+        </header>
+
+        <!-- Seção de Resumo Financeiro -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200">
+                <h3 class="font-semibold text-slate-600">Total de Parcelas a Pagar</h3>
+                <p id="total-a-pagar" class="text-2xl font-bold text-red-500 mt-1">R$ 0,00</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200">
+                <h3 class="font-semibold text-slate-600">Desembolso no Mês</h3>
+                <p id="desembolso-mes" class="text-2xl font-bold text-sky-600 mt-1">R$ 0,00</p>
+            </div>
+             <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200">
+                <h3 class="font-semibold text-slate-600">Total de Compras no Mês</h3>
+                <p id="total-compras-mes" class="text-2xl font-bold text-purple-600 mt-1">R$ 0,00</p>
+            </div>
+        </div>
+
+        <!-- Formulário para Adicionar Gastos -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-8 border border-slate-200">
+            <h2 class="text-xl font-bold text-slate-700 mb-4">Adicionar Novo Gasto</h2>
+            <form id="expense-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label for="descricao" class="block text-sm font-medium text-slate-600">Descrição</label>
+                    <input type="text" id="descricao" placeholder="Ex: Compras do supermercado" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500" required>
+                </div>
+                <div>
+                    <label for="valor" class="block text-sm font-medium text-slate-600">Valor Total</label>
+                    <input type="number" id="valor" placeholder="150.50" step="0.01" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500" required>
+                </div>
+                <div>
+                    <label for="data" class="block text-sm font-medium text-slate-600">Data da Compra</label>
+                    <input type="date" id="data" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500" required>
+                </div>
+                <div>
+                    <label for="quem-pagou" class="block text-sm font-medium text-slate-600">Quem Pagou</label>
+                    <select id="quem-pagou" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500" required>
+                        <option value="" disabled selected>Selecione uma opção</option>
+                        <option value="Matheus">Matheus</option>
+                        <option value="Milene">Milene</option>
+                        <option value="Conta Conjunta">Conta Conjunta</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="is-parcelado" class="h-4 w-4 text-sky-600 border-slate-300 rounded focus:ring-sky-500">
+                    <label for="is-parcelado" class="text-sm font-medium text-slate-600">É parcelado?</label>
+                </div>
+                <!-- Campos de Parcela que aparecem/desaparecem -->
+                <div id="parcelas-info" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 hidden-details">
+                    <div>
+                        <label for="total-parcelas" class="block text-sm font-medium text-slate-600">Total de Parcelas</label>
+                        <input type="number" id="total-parcelas" placeholder="Ex: 10" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label for="parcelas-pagas" class="block text-sm font-medium text-slate-600">Parcelas Já Pagas</p></label>
+                        <input type="number" id="parcelas-pagas" placeholder="Ex: 2" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500">
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <button type="submit" class="w-full flex justify-center items-center gap-2 bg-sky-600 text-white font-bold py-2 px-4 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                        Adicionar Gasto
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela de Gastos -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-slate-200">
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-slate-700">Lista de Gastos</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-slate-500">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Descrição</th>
+                            <th scope="col" class="px-6 py-3">Valor / Parcela</th>
+                            <th scope="col" class="px-6 py-3">Progresso</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                            <th scope="col" class="px-6 py-3">Quem Pagou</th>
+                            <th scope="col" class="px-6 py-3">Data</th>
+                            <th scope="col" class="px-6 py-3 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expense-list" class="divide-y divide-slate-200">
+                        <!-- Linhas de gastos serão inseridas aqui pelo JavaScript -->
+                        <tr id="empty-state" class="hidden">
+                            <td colspan="7" class="text-center py-10 text-slate-500">
+                                <p>Nenhum gasto adicionado ainda.</p>
+                                <p class="text-xs">Comece preenchendo o formulário acima!</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa os ícones
+            lucide.createIcons();
+
+            // Elementos do DOM
+            const form = document.getElementById('expense-form');
+            const isParceladoCheckbox = document.getElementById('is-parcelado');
+            const parcelasInfoDiv = document.getElementById('parcelas-info');
+            const expenseList = document.getElementById('expense-list');
+            const emptyStateRow = document.getElementById('empty-state');
+
+            // Carrega os gastos do Local Storage ou inicializa um array vazio
+            let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+
+            // Função para formatar valores como moeda (Real Brasileiro)
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+            };
+
+            // Função para renderizar os gastos na tabela
+            const renderExpenses = () => {
+                expenseList.innerHTML = ''; // Limpa a lista
+                if (expenses.length === 0) {
+                    emptyStateRow.classList.remove('hidden');
+                } else {
+                    emptyStateRow.classList.add('hidden');
+                    expenses.sort((a, b) => new Date(b.data) - new Date(a.data)); // Ordena por data mais recente
+                    expenses.forEach(expense => {
+                        const valorParcela = expense.valorTotal / (expense.totalParcelas || 1);
+                        
+                        const statusClass = expense.status === 'Pago' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                        const statusText = expense.status;
+                        
+                        const newRow = document.createElement('tr');
+                        newRow.className = 'bg-white hover:bg-slate-50 transition-colors';
+                        newRow.innerHTML = `
+                            <td class="px-6 py-4 font-medium text-slate-900">${expense.descricao}</td>
+                            <td class="px-6 py-4">
+                                <div class="font-semibold">${formatCurrency(valorParcela)}</div>
+                                <div class="text-xs text-slate-500">${formatCurrency(expense.valorTotal)} total</div>
+                            </td>
+                            <td class="px-6 py-4">${expense.parcelasPagas} / ${expense.totalParcelas}</td>
+                            <td class="px-6 py-4">
+                                <button onclick="toggleStatus('${expense.id}')" title="Clique para alterar" class="w-24 text-center cursor-pointer px-2 py-1 text-xs font-medium rounded-full ${statusClass} transition-transform transform hover:scale-105">${statusText}</button>
+                            </td>
+                            <td class="px-6 py-4">${expense.quemPagou}</td>
+                            <td class="px-6 py-4">${new Date(expense.data + 'T03:00:00Z').toLocaleDateString('pt-BR')}</td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    ${expense.isParcelado && expense.parcelasPagas > 0 ? `<button title="Remover pagamento de parcela" onclick="unpayInstallment('${expense.id}')" class="p-1 text-orange-500 hover:text-orange-700 transition-colors"><i data-lucide="minus-circle" class="w-5 h-5"></i></button>` : `<div class="w-7 h-7"></div>`}
+                                    ${expense.status === 'Pendente' ? `<button title="Pagar uma parcela" onclick="payInstallment('${expense.id}')" class="p-1 text-green-600 hover:text-green-800 transition-colors"><i data-lucide="plus-circle" class="w-5 h-5"></i></button>` : `<div class="w-7 h-7"></div>`}
+                                    <button title="Excluir gasto" onclick="deleteExpense('${expense.id}')" class="p-1 text-red-500 hover:text-red-700 transition-colors"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                </div>
+                            </td>
+                        `;
+                        expenseList.appendChild(newRow);
+                    });
+                }
+                updateSummary();
+                lucide.createIcons(); // Recria os ícones após renderizar
+            };
+
+            // Função para atualizar o resumo financeiro
+            const updateSummary = () => {
+                const hoje = new Date();
+                const mesAtual = hoje.getMonth();
+                const anoAtual = hoje.getFullYear();
+
+                // 1. Total de dívidas futuras (parcelas restantes)
+                const totalAPagar = expenses.reduce((acc, exp) => {
+                    if (exp.status === 'Pendente' && exp.isParcelado) {
+                        const valorParcela = exp.valorTotal / exp.totalParcelas;
+                        const parcelasRestantes = exp.totalParcelas - exp.parcelasPagas;
+                        return acc + (valorParcela * parcelasRestantes);
+                    }
+                    return acc;
+                }, 0);
+
+                // 2. Desembolso real no mês (fluxo de caixa)
+                let desembolsoMes = 0;
+                expenses.forEach(exp => {
+                    const dataGasto = new Date(exp.data + 'T03:00:00Z');
+                    if (exp.isParcelado) {
+                        const purchaseMonth = dataGasto.getMonth();
+                        const purchaseYear = dataGasto.getFullYear();
+                        const monthsSincePurchase = (anoAtual - purchaseYear) * 12 + (mesAtual - purchaseMonth);
+                        if (monthsSincePurchase >= 0 && monthsSincePurchase < exp.totalParcelas && exp.status === 'Pendente') {
+                            const valorParcela = exp.valorTotal / exp.totalParcelas;
+                            desembolsoMes += valorParcela;
+                        }
+                    } else { // Compra à vista
+                        if (dataGasto.getMonth() === mesAtual && dataGasto.getFullYear() === anoAtual && exp.status === 'Pendente') {
+                             desembolsoMes += exp.valorTotal;
+                        }
+                    }
+                });
+                
+                // 3. Total de compras feitas no mês (valor total dos itens)
+                const totalComprasMes = expenses.reduce((acc, exp) => {
+                    const dataGasto = new Date(exp.data + 'T03:00:00Z');
+                    if (dataGasto.getMonth() === mesAtual && dataGasto.getFullYear() === anoAtual) {
+                        return acc + exp.valorTotal;
+                    }
+                    return acc;
+                }, 0);
+
+                document.getElementById('total-a-pagar').textContent = formatCurrency(totalAPagar);
+                document.getElementById('desembolso-mes').textContent = formatCurrency(desembolsoMes);
+                document.getElementById('total-compras-mes').textContent = formatCurrency(totalComprasMes);
+            };
+
+            // Função para salvar no Local Storage
+            const saveExpenses = () => {
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+            };
+
+            // Event listener para o checkbox de parcelamento
+            isParceladoCheckbox.addEventListener('change', () => {
+                parcelasInfoDiv.classList.toggle('show-details', isParceladoCheckbox.checked);
+                parcelasInfoDiv.classList.toggle('hidden-details', !isParceladoCheckbox.checked);
+            });
+
+            // Event listener para o envio do formulário
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const isParcelado = isParceladoCheckbox.checked;
+                const totalParcelasInput = document.getElementById('total-parcelas');
+                const parcelasPagasInput = document.getElementById('parcelas-pagas');
+                
+                if (isParcelado && (!totalParcelasInput.value || parseInt(totalParcelasInput.value) <= 0)) {
+                    alert('Por favor, insira um número válido de parcelas.');
+                    return;
+                }
+                
+                const newExpense = {
+                    id: Date.now().toString(),
+                    descricao: document.getElementById('descricao').value,
+                    valorTotal: parseFloat(document.getElementById('valor').value),
+                    data: document.getElementById('data').value,
+                    quemPagou: document.getElementById('quem-pagou').value,
+                    isParcelado: isParcelado,
+                    totalParcelas: isParcelado ? parseInt(totalParcelasInput.value) || 1 : 1,
+                    parcelasPagas: isParcelado ? parseInt(parcelasPagasInput.value) || 0 : 0,
+                };
+                newExpense.status = newExpense.parcelasPagas >= newExpense.totalParcelas ? 'Pago' : 'Pendente';
+
+
+                expenses.push(newExpense);
+                saveExpenses();
+                renderExpenses();
+                form.reset();
+                isParceladoCheckbox.checked = false;
+                parcelasInfoDiv.classList.remove('show-details');
+                parcelasInfoDiv.classList.add('hidden-details');
+            });
+            
+            // Funções globais para os botões de ação
+            window.toggleStatus = (id) => {
+                const expense = expenses.find(exp => exp.id === id);
+                if (expense) {
+                    if (expense.status === 'Pendente') {
+                        expense.status = 'Pago';
+                        expense.parcelasPagas = expense.totalParcelas;
+                    } else { // status was 'Pago'
+                        expense.status = 'Pendente';
+                        if (expense.totalParcelas > 0) {
+                            expense.parcelasPagas = expense.totalParcelas - 1;
+                        }
+                    }
+                    saveExpenses();
+                    renderExpenses();
+                }
+            };
+
+            window.unpayInstallment = (id) => {
+                const expense = expenses.find(exp => exp.id === id);
+                if (expense && expense.isParcelado && expense.parcelasPagas > 0) {
+                    expense.parcelasPagas--;
+                    if (expense.parcelasPagas < expense.totalParcelas) {
+                        expense.status = 'Pendente';
+                    }
+                    saveExpenses();
+                    renderExpenses();
+                }
+            };
+
+            window.payInstallment = (id) => {
+                const expense = expenses.find(exp => exp.id === id);
+                if (expense && expense.parcelasPagas < expense.totalParcelas) {
+                    expense.parcelasPagas++;
+                    if (expense.parcelasPagas >= expense.totalParcelas) {
+                        expense.status = 'Pago';
+                    }
+                    saveExpenses();
+                    renderExpenses();
+                }
+            };
+
+            window.deleteExpense = (id) => {
+                // A exclusão agora é imediata, sem confirmação.
+                expenses = expenses.filter(exp => exp.id !== id);
+                saveExpenses();
+                renderExpenses();
+            };
+
+
+
+            // Renderização inicial
+            renderExpenses();
+        });
+    </script>
+</body>
+</html>
+
