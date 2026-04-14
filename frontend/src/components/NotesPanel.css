@@ -1,0 +1,47 @@
+.notes-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.notes-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.notes-status {
+  font-size: 11px;
+  color: var(--success);
+}
+
+.notes-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 14px 16px;
+  resize: none;
+  overflow-y: auto;
+}
+
+.notes-textarea::placeholder {
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.notes-textarea:focus {
+  outline: none;
+}
