@@ -1,0 +1,235 @@
+.video-container {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  overflow: hidden;
+  user-select: none;
+}
+
+.video-container.show-controls {
+  cursor: default;
+}
+
+.video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.video-placeholder {
+  flex: 1;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+/* ─── CONTROLES ─── */
+.video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85) 60%);
+  padding: 48px 16px 14px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.show-controls .video-controls {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+/* ─── BARRA DE PROGRESSO ─── */
+.progress-track {
+  position: relative;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: height var(--transition);
+}
+
+.progress-track:hover {
+  height: 6px;
+}
+
+.progress-buffered {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: rgba(255,255,255,0.25);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.progress-played {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--accent);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.progress-thumb {
+  position: absolute;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.progress-track:hover .progress-thumb {
+  opacity: 1;
+}
+
+/* ─── BOTÕES ─── */
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.controls-left,
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ctrl-btn {
+  background: none;
+  color: white;
+  font-size: 18px;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  transition: background var(--transition), transform var(--transition);
+  line-height: 1;
+}
+
+.ctrl-btn:hover {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.1);
+}
+
+.speed-btn {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 8px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+}
+
+.volume-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.volume-slider {
+  width: 72px;
+  height: 4px;
+  accent-color: white;
+  cursor: pointer;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.time-display {
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  white-space: nowrap;
+  padding-left: 4px;
+}
+
+/* ─── OVERLAY DE CONCLUSÃO ─── */
+.video-completed-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 0.4s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.completed-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 40px 48px;
+  text-align: center;
+  animation: slide-up 0.3s ease;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.completed-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: white;
+  margin: 0 auto 16px;
+}
+
+.completed-card h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.btn-next-lesson {
+  background: var(--accent);
+  color: white;
+  padding: 12px 28px;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 700;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.btn-next-lesson:hover {
+  background: var(--accent-hover);
+  transform: scale(1.03);
+}

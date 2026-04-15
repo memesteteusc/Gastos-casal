@@ -1,0 +1,234 @@
+.course-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+.course-card:hover {
+  border-color: #555;
+  transform: translateY(-2px);
+}
+
+.course-card-header {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+}
+
+.course-card-thumb {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.thumb-icon {
+  font-size: 32px;
+}
+
+.badge-done {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--success);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.course-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.course-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.course-card-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.progress-bar-wrap {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.progress-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.course-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 14px;
+}
+
+.btn-continue {
+  flex: 1;
+  background: var(--accent);
+  color: white;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background var(--transition);
+}
+
+.btn-continue:hover {
+  background: var(--accent-hover);
+}
+
+.btn-expand {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+
+.btn-expand:hover {
+  background: #333;
+  color: var(--text-primary);
+}
+
+.btn-delete {
+  background: transparent;
+  color: var(--text-muted);
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  font-size: 16px;
+  transition: color var(--transition);
+}
+
+.btn-delete:hover {
+  color: var(--accent);
+}
+
+.course-card-detail {
+  border-top: 1px solid var(--border);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.detail-loading {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.module-section {
+  border-bottom: 1px solid var(--border);
+}
+
+.module-section:last-child {
+  border-bottom: none;
+}
+
+.module-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.03);
+}
+
+.module-num {
+  color: var(--accent);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lesson-list {
+  padding: 4px 0;
+}
+
+.lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background var(--transition);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.lesson-item:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+}
+
+.lesson-done {
+  color: var(--text-muted);
+}
+
+.lesson-status {
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+.lesson-done .lesson-status {
+  color: var(--success);
+}
+
+.lesson-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lesson-pct {
+  font-size: 11px;
+  color: var(--accent-light);
+  flex-shrink: 0;
+}
+
+.lesson-dur {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
