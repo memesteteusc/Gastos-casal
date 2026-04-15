@@ -1,118 +1,123 @@
 @echo off
 chcp 65001 >nul
-title CursoFlix
-
-echo.
-echo  ██████╗██╗   ██╗██████╗ ███████╗ ██████╗ ███████╗██╗     ██╗██╗  ██╗
-echo ██╔════╝██║   ██║██╔══██╗██╔════╝██╔═══██╗██╔════╝██║     ██║╚██╗██╔╝
-echo ██║     ██║   ██║██████╔╝███████╗██║   ██║█████╗  ██║     ██║ ╚███╔╝
-echo ██║     ██║   ██║██╔══██╗╚════██║██║   ██║██╔══╝  ██║     ██║ ██╔██╗
-echo ╚██████╗╚██████╔╝██║  ██║███████║╚██████╔╝██║     ███████╗██║██╔╝ ██╗
-echo  ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝╚═╝  ╚═╝
-echo.
-echo  Gerenciador de Aulas em Video
-echo  ================================
-echo.
+title CursoFlix — Iniciando...
 
 cd /d "%~dp0"
+
+echo.
+echo  ==========================================
+echo   CursoFlix - Gerenciador de Aulas
+echo  ==========================================
+echo.
 
 :: ─── Verifica Node.js ───────────────────────────────────────────────────────
 node --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [ERRO] Node.js nao encontrado no seu computador!
+    echo  [ERRO] Node.js nao esta instalado!
     echo.
-    echo  Por favor, siga estes passos:
-    echo  1. Abra o navegador e acesse: https://nodejs.org
-    echo  2. Clique no botao verde "LTS" para baixar
-    echo  3. Abra o arquivo baixado e clique em "Next" ate o fim
-    echo  4. Feche e abra de novo este arquivo INICIAR.bat
+    echo  Faca isso:
+    echo  1. Abra o Chrome
+    echo  2. Acesse: https://nodejs.org
+    echo  3. Clique no botao verde "LTS"
+    echo  4. Instale e volte a clicar no INICIAR.bat
     echo.
     pause
     exit /b 1
 )
 
-echo [OK] Node.js encontrado.
+echo  [1/4] Node.js encontrado. OK
+echo.
 
-:: ─── Instala dependencias do backend ────────────────────────────────────────
+:: ─── Instala dependencias backend ───────────────────────────────────────────
 if not exist "backend\node_modules\" (
+    echo  [2/4] Instalando componentes do servidor...
+    echo        Aguarde, pode demorar alguns minutos na 1a vez...
     echo.
-    echo [1/3] Instalando dependencias do servidor...
-    echo       (Isso so acontece na primeira vez - aguarde)
     cd backend
-    npm install --silent
+    npm install
     cd ..
-    echo [OK] Dependencias instaladas.
+    echo.
+    echo  Componentes instalados. OK
+) else (
+    echo  [2/4] Componentes do servidor. OK
 )
 
-:: ─── Instala dependencias do frontend ───────────────────────────────────────
-if not exist "frontend\node_modules\" (
+:: ─── Build frontend se nao existir ──────────────────────────────────────────
+if not exist "frontend\dist\index.html" (
     echo.
-    echo [2/3] Instalando dependencias do app visual...
-    cd frontend
-    npm install --silent
-    cd ..
-    echo [OK] Dependencias do frontend instaladas.
-)
-
-:: ─── Build do frontend ───────────────────────────────────────────────────────
-if not exist "frontend\dist\" (
-    echo.
-    echo [3/3] Preparando o app visual...
+    echo  [3/4] Preparando a interface visual...
+    if not exist "frontend\node_modules\" (
+        cd frontend
+        npm install
+        cd ..
+    )
     cd frontend
     npm run build
     cd ..
-    echo [OK] App visual preparado.
+    echo  Interface preparada. OK
+) else (
+    echo  [3/4] Interface visual. OK
 )
 
 :: ─── Cria .env se nao existir ────────────────────────────────────────────────
 if not exist "backend\.env" (
-    echo ANTHROPIC_API_KEY=> backend\.env
-    echo PORT=3001>> backend\.env
+    echo ANTHROPIC_API_KEY=> "backend\.env"
+    echo PORT=3001>> "backend\.env"
 )
 
-:: ─── Inicia o servidor ───────────────────────────────────────────────────────
+:: ─── Para servidor anterior se existir ──────────────────────────────────────
 echo.
-echo [OK] Iniciando CursoFlix...
-echo.
+echo  [4/4] Iniciando servidor...
 
-cd backend
-set NODE_ENV=production
-
-:: Para qualquer instancia anterior
-for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr ":3001 " ^| findstr "LISTENING"') do (
+for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr ":3001"') do (
     taskkill /f /pid %%a >nul 2>&1
 )
 
-start /b node server.js > ..\cursoflix.log 2>&1
+timeout /t 1 /nobreak >nul
 
-:: Aguarda o servidor subir
-timeout /t 3 /nobreak >nul
+:: ─── Inicia o servidor ───────────────────────────────────────────────────────
+cd backend
+set NODE_ENV=production
+start "CursoFlix-Servidor" /min node server.js
+cd ..
 
-:: Verifica se subiu
-curl -s http://localhost:3001 >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [ERRO] O servidor nao conseguiu iniciar.
-    echo Veja o arquivo cursoflix.log para detalhes.
-    pause
-    exit /b 1
-)
-
-:: ─── Abre o navegador ────────────────────────────────────────────────────────
-echo  ✅ CursoFlix aberto no navegador!
+:: ─── Aguarda o servidor subir (10 segundos) ──────────────────────────────────
 echo.
-echo  Se o navegador nao abrir automaticamente,
-echo  acesse manualmente: http://localhost:3001
-echo.
-echo  ⚠  NAO FECHE ESTA JANELA enquanto estiver usando o app.
-echo     Para sair, feche esta janela ou pressione qualquer tecla.
-echo.
+echo  Aguardando servidor iniciar...
+timeout /t 5 /nobreak >nul
 
-start http://localhost:3001
+:: ─── Tenta abrir o navegador de varias formas ────────────────────────────────
+echo.
+echo  Abrindo navegador...
+
+:: Tenta Chrome primeiro
+start "" "http://localhost:3001"
+
+timeout /t 2 /nobreak >nul
+
+:: ─── Mostra instrucoes ───────────────────────────────────────────────────────
+echo.
+echo  ==========================================
+echo.
+echo   App rodando em: http://localhost:3001
+echo.
+echo   Se o navegador nao abriu automaticamente:
+echo   1. Abra o Chrome manualmente
+echo   2. Clique na barra de endereco
+echo   3. Digite:  localhost:3001
+echo   4. Aperte Enter
+echo.
+echo  ==========================================
+echo.
+echo   IMPORTANTE: Nao feche esta janela!
+echo   O app para de funcionar se fechar.
+echo.
+echo  Para encerrar o CursoFlix: feche esta janela
+echo  ==========================================
+echo.
 
 pause
 
-:: ─── Encerra o servidor ao fechar ────────────────────────────────────────────
-for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr ":3001 " ^| findstr "LISTENING"') do (
-    taskkill /f /pid %%a >nul 2>&1
-)
-echo Servidor encerrado. Ate logo!
+:: ─── Encerra servidor ────────────────────────────────────────────────────────
+taskkill /f /im node.exe >nul 2>&1
+echo Servidor encerrado.
